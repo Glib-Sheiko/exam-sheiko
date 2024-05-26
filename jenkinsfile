@@ -1,0 +1,37 @@
+pipeline {
+    agent any
+    options {
+        skipDefaultCheckout(true)
+    }
+    stages {
+        
+        stage('Cleaning workspace') {
+            steps {
+               echo "**************** Start cleaning ***************************"
+               sh "rm -Rf /prod1/*"
+               sh "rm -Rf /prod1/.git"
+               sh "rm -Rf /prod2/*"
+               sh "rm -Rf /prod2/.git"
+               echo "**************** cleaning is completed ***************************"
+                    }
+        }
+        stage('Cloning from Hilab') {
+            steps {
+               echo "**************** Start cloning from Hithub ***************************"
+               sh "git clone -b main https://gitlab.com/staskuznetsov/site.git /prod1"
+               sh "git clone -b dev https://gitlab.com/staskuznetsov/site.git /prod2"               
+               echo "**************** Cloning from Hithub is completed ***************************"
+                    }
+                                            }
+                    stage('Deploying web site') {
+            steps {
+                echo "**************** Start deploying web site ***************************"
+                sh "cd ~"
+                sh "ansible-playbook ~/prod1.yml -u glib --private-key /var/lib/jenkins/key/id_rsa"
+                sh "ansible-playbook ~/prod2.yml -u glib --private-key /var/lib/jenkins/key/id_rsa"
+                echo "**************** Deploying web site is completed ***************************"
+                    }  
+
+                                            }
+    }
+}
