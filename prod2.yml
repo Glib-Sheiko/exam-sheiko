@@ -1,0 +1,11 @@
+---
+- name: Configure WebServers on prod1
+  hosts: prod2
+  become: True
+  tasks:
+    - name: Install Nginx
+      apt: name=nginx
+    - name: Copy site index.html   C
+      copy: src=/prod2/index.html dest=/var/www/html
+    - name: restart Nginx
+      service: name=nginx state=restarted
